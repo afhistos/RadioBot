@@ -28,6 +28,7 @@ public class CommandVolume extends Command {
         } else{
             String successful = Audio.getInstance().setVolume(guild, volume);
            event.reply(successful);
+           event.reply(Audio.getInstance().getDebug(event.getGuild()));
         }
     }
 }
