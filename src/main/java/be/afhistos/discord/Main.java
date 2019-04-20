@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class Main implements Runnable{
     private static JDA jda;
-    private final String token = "NTY3NzI2MjY5MjA3MjgxNjc0.XLXu9w.VZv_TPOzgHqgch6biywiB1xTBWc";
+    private final String token = "TOKEN";
     private static final CommandClientBuilder builder = new CommandClientBuilder();
     private Scanner scanner = new Scanner(System.in);
     private static CommandClient client;
