@@ -90,8 +90,9 @@ public class Audio {
     public String setVolume(Guild guild, int v){
         GuildMusicManager musicManager = getGuildAudioPlayer(guild);
         AudioTrack track = musicManager.player.getPlayingTrack();
+        musicManager.player.stopTrack();
         musicManager.player.setVolume(v);
-        musicManager.player.playTrack(track);
+        musicManager.player.startTrack(track, true);
         return "New volume :" +musicManager.player.getVolume();
     }
     public String getDebug(Guild guild){
