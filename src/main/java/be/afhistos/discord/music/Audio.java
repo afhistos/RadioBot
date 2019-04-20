@@ -3,6 +3,7 @@ package be.afhistos.discord.music;
 
 import be.afhistos.discord.Main;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -22,9 +23,8 @@ import java.util.Map;
 public class Audio {
     private static Audio instance = new Audio();
     private final AudioPlayerManager playerManager;
-    private final Map<Long, GuildMusicManager> musicManagers;
+    private final Map<Long, GuildMusicManager> musicManagers = new HashMap<Long, GuildMusicManager>();
     private Audio(){
-        this.musicManagers = new HashMap<>();
         this.playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
         AudioSourceManagers.registerLocalSource(playerManager);
@@ -89,9 +89,19 @@ public class Audio {
     }
     public String setVolume(Guild guild, int v){
         GuildMusicManager musicManager = getGuildAudioPlayer(guild);
+        AudioTrack track = musicManager.player.getPlayingTrack();
         musicManager.player.setVolume(v);
-        musicManager.player.setPaused(false);
+        musicManager.player.playTrack(track);
         return "New volume :" +musicManager.player.getVolume();
+    }
+    public String getDebug(Guild guild){
+        GuildMusicManager musicManager = getGuildAudioPlayer(guild);
+        AudioPlayer player = musicManager.player;
+        int volume = player.getVolume();
+        AudioTrack track = player.getPlayingTrack();
+        TrackScheduler scheduler = musicManager.scheduler;
+        return "**Débug**\n```Markdown\n<GuildMusicManager musicManager=\""+musicManager+"\">\n<AudioPlayer player=\""+player
+            +"\">\n<int volume=\""+volume+"\">\n<AudioTrack track=\""+track+"\">\n<TrackScheduler scheduler=\""+scheduler+"\">\n```";
     }
     public void skipTrack(TextChannel channel){
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
