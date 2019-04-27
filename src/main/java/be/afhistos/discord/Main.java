@@ -2,6 +2,7 @@ package be.afhistos.discord;
 
 import be.afhistos.discord.commands.*;
 import be.afhistos.discord.music.Audio;
+import be.afhistos.discord.news.News;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import net.dv8tion.jda.core.AccountType;
@@ -28,6 +29,7 @@ public class Main implements Runnable{
         String[] features = {"Afficher les dernières nouvelles", "Jouer de la musique, controlée par MK_16", "*attends mais il va foutre la merde là*"};
         builder.addCommand(new CommandJoin());
         builder.addCommand(new CommandLeft());
+        builder.addCommand(new CommandNews());
         builder.addCommand(new CommandAbout(new Color(37,105,160), "Voici quelques infos à propos de moi", features));
         builder.setOwnerId("279597100961103872");
         builder.setEmojis("\u2705", "\u26a0", "\u274c");
@@ -48,6 +50,9 @@ public class Main implements Runnable{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        //Infos
+        News news = new News(args[1], args[2]);
+        System.out.println("Initialized news!");
     }
 
     public static void setRunning(boolean running) {Main.running = running;}

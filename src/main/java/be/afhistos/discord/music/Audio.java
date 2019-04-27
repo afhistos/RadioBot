@@ -73,8 +73,8 @@ public class Audio extends ListenerAdapter {
         }catch (Exception ign){
             vol = 35; //Default
         }
-        if(vol < 0 || vol > 100){
-            textChannel.sendMessage(":warning: Le volume doit être un nombre compris entre **0** et **100**!").queue();
+        if(vol < 0 || vol > 120){
+            textChannel.sendMessage(":warning: Le volume doit être un nombre compris entre **0** et **120**!").queue();
             return;
         }
         getGuildAudioPlayer(textChannel.getGuild()).player.setVolume(vol);
