@@ -1,6 +1,7 @@
 package be.afhistos.discord;
 
 import be.afhistos.discord.commands.*;
+import be.afhistos.discord.music.Audio;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import net.dv8tion.jda.core.AccountType;
@@ -15,27 +16,23 @@ import java.util.Scanner;
 
 public class Main implements Runnable{
     private static JDA jda;
-    private final String token = "TOKEN";
     private static final CommandClientBuilder builder = new CommandClientBuilder();
     private Scanner scanner = new Scanner(System.in);
     private static CommandClient client;
     private static boolean running;
 
-    public Main() throws LoginException, InterruptedException{
+    public Main(String token) throws LoginException, InterruptedException{
         builder.setGame(Game.playing("Starting . . ."));
         builder.setStatus(OnlineStatus.DO_NOT_DISTURB);
         builder.setPrefix(",");
         String[] features = {"Afficher les dernières nouvelles", "Jouer de la musique, controlée par MK_16", "*attends mais il va foutre la merde là*"};
         builder.addCommand(new CommandJoin());
         builder.addCommand(new CommandLeft());
-        builder.addCommand(new CommandPlay());
-        builder.addCommand(new CommandVolume());
-        builder.addCommand(new CommandPause());
         builder.addCommand(new CommandAbout(new Color(37,105,160), "Voici quelques infos à propos de moi", features));
         builder.setOwnerId("279597100961103872");
         builder.setEmojis("\u2705", "\u26a0", "\u274c");
         client = builder.build();
-        jda = new JDABuilder(AccountType.BOT).setToken(token).addEventListener(client).addEventListener(new EventsListener()).buildAsync();
+        jda = new JDABuilder(AccountType.BOT).setToken(token).addEventListener(new Audio()).addEventListener(client).addEventListener(new EventsListener()).buildAsync();
         jda.awaitReady();
         jda.getPresence().setGame(Game.playing("Prêt pour mettre le feu!"));
         jda.getPresence().setStatus(OnlineStatus.ONLINE);
@@ -43,7 +40,7 @@ public class Main implements Runnable{
 
     public static void main(String[] args) {
         try{
-            Main main  = new Main();
+            Main main  = new Main(args[0]);
             new Thread(main, "radioBot-Thread").start();
             Thread.sleep(5000);
         } catch (LoginException e) {
