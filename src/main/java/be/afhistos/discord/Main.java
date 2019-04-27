@@ -30,6 +30,7 @@ public class Main implements Runnable{
         builder.addCommand(new CommandJoin());
         builder.addCommand(new CommandLeft());
         builder.addCommand(new CommandNews());
+        builder.addCommand(new CommandListRadios());
         builder.addCommand(new CommandAbout(new Color(37,105,160), "Voici quelques infos à propos de moi", features));
         builder.setOwnerId("279597100961103872");
         builder.setEmojis("\u2705", "\u26a0", "\u274c");
