@@ -1,10 +1,14 @@
 package be.afhistos.discord.music;
 
+import be.afhistos.discord.Main;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.TextChannel;
 
+import java.awt.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -44,6 +48,7 @@ public class TrackScheduler extends AudioEventAdapter {
         // Start the next track, regardless of if something is already playing or not. In case queue was empty, we are
         // giving null to startTrack, which is a valid argument and will simply stop the player.
         player.startTrack(queue.poll(), false);
+        AudioListener listener = new AudioListener(Audio.channel);
     }
 
     @Override
@@ -53,4 +58,35 @@ public class TrackScheduler extends AudioEventAdapter {
             nextTrack();
         }
     }
+
+    @Override
+    public void onTrackStart(AudioPlayer player, AudioTrack track) {
+        sendNowPlaying(Audio.channel, track);
+    }
+
+    public void sendNowPlaying(TextChannel channel, AudioTrack track) {
+        EmbedBuilder embed = new EmbedBuilder();
+        if(track == null){
+            embed.setTitle("Aucun morceau n'est joué pour le moment!");
+            embed.setColor(new Color(45,45,45));
+            embed.addField("Pour jouer de la musique:", ",play <Lien youtube/soundcloud/radios/...>", true);
+            embed.addBlankField(true);
+            embed.addField("Pour obtenir la liste des radios disponibles: ", ",listradios", true);
+        }else {
+            embed.setTitle("Morceau actuellement joué:", track.getInfo().uri);
+            embed.setColor(track.getSourceManager().getSourceName().equalsIgnoreCase("youtube") ? new Color(255, 75, 75) : new Color(45, 45, 45));
+            embed.addField(track.getInfo().title, "par " + track.getInfo().author.replace("- Topic", ""), false);
+            embed.addField("Position:", Audio.getTimestamp(track.getPosition()) + "/" + Audio.getTimestamp(track.getDuration()), true);
+            String status = Audio.getStatus(track);
+            embed.addField("Status: ", status, true);
+            String stream = track.getInfo().isStream ? "Oui" : "Non";
+            embed.addField("Joue un stream ?", stream, true);
+            embed.addField("Volume:", player.getVolume()+"%", false);
+        }
+        embed.setThumbnail("https://img.youtube.com/vi/"+track.getIdentifier()+"/hqdefault.jpg");
+        embed.setFooter("RadioBot, pour vous servir", Main.getJda().getSelfUser().getAvatarUrl());
+        channel.sendMessage(embed.build()).queue();
+    }
+
+
 }

@@ -22,11 +22,6 @@ public class CommandLeft extends Command {
         if(event.getSelfMember().getVoiceState().inVoiceChannel()){
             audioManager.closeAudioConnection();
             event.getMessage().clearReactions().complete();
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             if(event.getSelfMember().getVoiceState().inVoiceChannel()){
                 event.getMessage().clearReactions().complete();
                 event.reactError();
