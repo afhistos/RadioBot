@@ -89,15 +89,18 @@ public class Audio extends ListenerAdapter {
             public void trackLoaded(AudioTrack track) {
                 channel.sendMessage("Ajout du morceau suivant à la file d'attente: " + track.getInfo().title).queue();
 
+
                 play(channel.getGuild(), musicManager, track);
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getSelectedTrack();
-
                 if (firstTrack == null) {
                     firstTrack = playlist.getTracks().get(0);
+                }
+                for(AudioTrack track : playlist.getTracks()){
+                    getGuildAudioPlayer(channel.getGuild()).scheduler.queue(track);
                 }
 
                 channel.sendMessage("Ajout du morceau suivant à la file d'attente: " + firstTrack.getInfo().title + " (premier morceau de la playlist **" + playlist.getName() + "**)").queue();
