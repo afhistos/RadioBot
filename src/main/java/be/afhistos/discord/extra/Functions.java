@@ -26,12 +26,12 @@ public class Functions {
     }
     public static BufferedImage getImage(String name){
         try{
-            return ImageIO.read(Functions.class.getResourceAsStream("/be/afhistos/mathutil/resources/"+name));
+            return ImageIO.read(Functions.class.getResourceAsStream("/"+name));
         } catch (IOException e){
-            Console.log(TextColor.BG_BLACK+TextColor.BRIGHT_BG_RED+"Impossible de charger la ressource données ('../resources/"+name+")! \n Assurez vous que le fichier est bien placé dans le package 'resources' et que le nom entré est correct!");
+            Console.log(TextColor.BG_BLACK+TextColor.BRIGHT_BG_RED+"Impossible de charger la ressource données ('../extra/assets/"+name+")! \n Assurez vous que le fichier est bien placé dans le package 'resources' et que le nom entré est correct!");
             return null;
         } catch (IllegalArgumentException e){
-            Console.log(TextColor.BG_YELLOW+TextColor.RED+"Impossible de charger la ressource données ('../resources/"+name+"')! \n Assurez vous que le fichier est bien placé dans le package 'resources' et que le nom entré est correct!");
+            Console.log(TextColor.BG_BLACK+TextColor.BRIGHT_RED+"Impossible de charger la ressource données ('../extra-assets/"+name+"')! \n Assurez vous que le fichier est bien placé dans le package 'resources' et que le nom entré est correct!");
             return null;
         }
     }

@@ -1,6 +1,7 @@
 package be.afhistos.discord;
 
 import be.afhistos.discord.commands.*;
+import be.afhistos.discord.graphics.LaunchPanel;
 import be.afhistos.discord.music.Audio;
 import be.afhistos.discord.news.News;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -18,9 +19,11 @@ import java.util.Scanner;
 public class Main implements Runnable{
     private static JDA jda;
     private static final CommandClientBuilder builder = new CommandClientBuilder();
-    private Scanner scanner = new Scanner(System.in);
+    public static Scanner scanner = new Scanner(System.in);
     private static CommandClient client;
-    private static boolean running;
+    private static Thread mainThread;
+    public static Thread t;
+    public static boolean running;
 
     public Main(String token) throws LoginException, InterruptedException{
         builder.setGame(Game.playing("Starting . . ."));
@@ -43,42 +46,53 @@ public class Main implements Runnable{
 
     public static void main(String[] args) {
         try{
-            Main main  = new Main(args[0]);
-            new Thread(main, "radioBot-Thread").start();
-            Thread.sleep(5000);
+            LaunchPanel.setText("Démarrage du bot . . .");
+             Main main = new Main(args[0]);
+             mainThread = new Thread(main, "radioBot-Thread");
+             mainThread.start();
+             LaunchPanel.setText("Bot démarré sous le nom: "+mainThread.getName());
+             System.out.println(mainThread.getName()+" started");
+             Thread.sleep(3500);
         } catch (LoginException e) {
             e.printStackTrace();
+            LaunchPanel.setText("Erreur ! Token incorrect");
         } catch (InterruptedException e) {
             e.printStackTrace();
+            LaunchPanel.setText("Erreur ! Le processus s'est brusquement arrêté.");
         }
+        LaunchPanel.setText("Démarrage du scanner . . .");
+        running = true;
         //Infos
+        t = new ScannerThread();
+        t.start();
+        LaunchPanel.setText("Scanner démarré sous le nom: "+t.getName());
+        System.out.println(t.getName()+" started");
+        System.out.println("running from Main.java: "+running);
         News news = new News(args[1], args[2]);
+        LaunchPanel.setText("Système de News démarré");
         System.out.println("Initialized news!");
     }
 
-    public static void setRunning(boolean running) {Main.running = running;}
-    public static Boolean getRunning(){return Main.running;}
+    public Boolean getRunning(){return this.running;}
     public static JDA getJda() {return jda;}
     public static CommandClientBuilder getBuilder() {return builder;}
     public static CommandClient getClient() {return client;}
 
-    @Override
-    public void run() {
-        running = true;
-        while (running){
-            if(scanner.hasNextLine()){
-                consoleCommand(scanner.nextLine());
-            }
-        }
-        scanner.close();
-        System.out.println("RadioBot was properly shutdowned.");
-        jda.shutdown();
-        System.exit(0);
-    }
-    private void consoleCommand(String command){
+
+    public static void consoleCommand(String command){
         if(command.equalsIgnoreCase("stop")){
             System.out.println("Stopping bot . . .");
-            setRunning(false);
+            t.interrupt();
+            running = false;
+            mainThread.interrupt();
+            System.out.println("RadioBot was properly shutdowned.");
+            jda.shutdown();
+            System.exit(0);
         }
+    }
+
+    @Override
+    public void run() {
+
     }
 }
