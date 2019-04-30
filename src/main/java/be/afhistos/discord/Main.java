@@ -26,8 +26,8 @@ public class Main implements Runnable{
     public static boolean running;
 
     public Main(String token) throws LoginException, InterruptedException{
+        builder.setStatus(OnlineStatus.INVISIBLE);
         builder.setGame(Game.playing("Starting . . ."));
-        builder.setStatus(OnlineStatus.DO_NOT_DISTURB);
         builder.setPrefix(",");
         String[] features = {"Afficher les dernières nouvelles", "Jouer de la musique, controlée par MK_16", "*attends mais il va foutre la merde là*"};
         builder.addCommand(new CommandJoin());
@@ -52,7 +52,6 @@ public class Main implements Runnable{
              mainThread.start();
              LaunchPanel.setText("Bot démarré sous le nom: "+mainThread.getName());
              System.out.println(mainThread.getName()+" started");
-             Thread.sleep(3500);
         } catch (LoginException e) {
             e.printStackTrace();
             LaunchPanel.setText("Erreur ! Token incorrect");

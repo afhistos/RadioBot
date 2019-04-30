@@ -32,13 +32,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Audio extends ListenerAdapter {
+    static Audio instance;
+    public static Audio getInstance() {
+        return instance;
+    }
+
     private final AudioPlayerManager playerManager;
     private final Map<Long, GuildMusicManager> musicManagers;
     public static TextChannel channel;
 
     public Audio() {
         this.musicManagers = new HashMap<>();
-
+        instance = this;
         this.playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
         AudioSourceManagers.registerLocalSource(playerManager);
@@ -68,7 +73,7 @@ public class Audio extends ListenerAdapter {
                 loadAndPlay(event.getTextChannel(), command[1]);
             } else if (",skip".equals(command[0])) {
                 skipTrack(event.getTextChannel());
-            } else if(",vol".equals(command[0]) || ",volume".equals(command[0])){
+            } else if(",vol".equals(command[0]) && command.length == 2|| ",volume".equals(command[0]) && command.length == 2){
                 setVolume(event.getTextChannel(), command[1]);
             } else if(",nowplaying".equals(command[0]) || ",np".equals(command[0])){
                 sendNowPlaying(event.getTextChannel());
@@ -97,8 +102,8 @@ public class Audio extends ListenerAdapter {
             String stream = track.getInfo().isStream ? "Oui" : "Non";
             embed.addField("Joue un stream ?", stream, false);
             embed.addField("Volume:", getGuildAudioPlayer(channel.getGuild()).player.getVolume()+"%", true);
+            embed.setThumbnail("https://img.youtube.com/vi/"+track.getIdentifier()+"/hqdefault.jpg");
         }
-        embed.setThumbnail("https://img.youtube.com/vi/"+track.getIdentifier()+"/hqdefault.jpg");
         embed.setFooter("RadioBot, pour vous servir", Main.getJda().getSelfUser().getAvatarUrl());
         channel.sendMessage(embed.build()).queue();
     }
@@ -123,7 +128,11 @@ public class Audio extends ListenerAdapter {
         return status;
     }
 
-    private void setVolume(TextChannel textChannel, String s) {
+    public void setVolume(int value, Guild selectedItem) {
+        getGuildAudioPlayer(selectedItem).player.setVolume(value);
+    }
+
+    public void setVolume(TextChannel textChannel, String s) {
         int vol;
         try{
             vol = Integer.valueOf(s);
@@ -189,7 +198,6 @@ public class Audio extends ListenerAdapter {
 
         channel.sendMessage("Saut du morceau actuel.").queue();
     }
-
     private static void connectToFirstVoiceChannel(AudioManager audioManager) {
         if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()) {
             for (VoiceChannel voiceChannel : audioManager.getGuild().getVoiceChannels()) {
@@ -198,6 +206,7 @@ public class Audio extends ListenerAdapter {
             }
         }
     }
+
     public static String getTimestamp(long ms){
         int sec = (int) (ms /1000) % 60;
         int min = (int) ((ms /(1000 *60)) %60);
@@ -208,5 +217,4 @@ public class Audio extends ListenerAdapter {
             return String.format("%02d:%02d", min,sec);
         }
     }
-
 }
