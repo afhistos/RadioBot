@@ -81,7 +81,7 @@ public class LaunchPanel extends JPanel implements FocusListener, ActionListener
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == this.connect){
             this.setVisible(false);
-            Main.main(new String[]{"NTY3NzI2MjY5MjA3MjgxNjc0.XMR-BQ.sdt5afB7oqXbxljDn5FZWQtgMOQ", "19:00", "f6eafbf500aa4a41b3a64d5812033fbc"});
+            Main.main(new String[]{"TOKEN-PART-1", "19:00", "TOKEN-PART-2"});
            Launch.getInstance().setContentPane(Launch.getInstance().getMainPanel());
         }
     }
