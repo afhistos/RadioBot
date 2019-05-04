@@ -40,7 +40,6 @@ public class Main implements Runnable{
         client = builder.build();
         jda = new JDABuilder(AccountType.BOT).setToken(token).addEventListener(new Audio()).addEventListener(client).addEventListener(new EventsListener()).buildAsync();
         jda.awaitReady();
-        jda.getPresence().setGame(Game.playing("Prêt pour mettre le feu!"));
         jda.getPresence().setStatus(OnlineStatus.ONLINE);
     }
 
